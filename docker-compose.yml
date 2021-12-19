@@ -1,0 +1,64 @@
+version: '3.1'
+services:
+  database_order:
+    image: postgres:14.0-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=handsome
+      - POSTGRES_DB=order
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  queue:
+    image: rabbitmq:3.9.11-management
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=khanh
+      - RABBITMQ_DEFAULT_PASS=handsome
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  order:
+    image: setel-order
+    build: ./order
+    restart: on-failure
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_HOST=database_order
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=handsome
+      - DATABASE_NAME=order
+      - NODE_ENV=development
+      - RABBITMQ_URL=amqp://khanh:handsome@queue:5672
+      - RABBITMQ_QUEUE=order
+      - RABBITMQ_DURABLE=true
+      - DELIVERY_DURATION=30000
+    command: ['node', 'dist/main.js']
+    depends_on:
+      - queue
+      - database_order
+  
+  payment:
+    image: setel-payment
+    build: ./payment
+    restart: on-failure
+    environment:
+      - NODE_ENV=development
+      - RABBITMQ_URL=amqp://khanh:handsome@queue:5672
+      - RABBITMQ_QUEUE=order
+      - RABBITMQ_DURABLE=true
+    command: ['node', 'dist/main.js']
+    depends_on:
+      - queue
+
+volumes:
+  postgres_data:
