@@ -22,18 +22,6 @@ export class BaseOrder {
   price: number;
   @Column()
   total: number;
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
-  public created_at: Date;
-
-  @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-  })
-  public updated_at: Date;
 }
 
 @Entity({ name: 'orders' })
@@ -42,4 +30,16 @@ export class Order extends BaseOrder {
   id: number;
   @Column({ type: 'enum', default: OrderStatus.CREATED, enum: OrderStatus })
   status: OrderStatus;
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  public created_at?: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  public updated_at?: Date;
 }
