@@ -6,7 +6,8 @@ declare global {
       DATABASE_USERNAME: string;
       DATABASE_PASSWORD: string;
       DATABASE_NAME: string;
-      NODE_ENV: 'development' | 'production';
+      DATABASE_PORT_TEST: number;
+      NODE_ENV: 'development' | 'production' | 'test';
       RABBITMQ_URL: string;
       RABBITMQ_QUEUE: string;
       RABBITMQ_DURABLE: boolean;

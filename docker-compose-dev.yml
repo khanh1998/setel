@@ -1,0 +1,32 @@
+version: '3.1'
+services:
+  database_order:
+    image: postgres:14.0-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=handsome
+      - POSTGRES_DB=order
+
+  queue:
+    image: rabbitmq:3.9.11-management
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=khanh
+      - RABBITMQ_DEFAULT_PASS=handsome
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  database_order_test:
+    image: postgres:14.0-alpine
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_PASSWORD=handsome
+      - POSTGRES_DB=order

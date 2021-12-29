@@ -36,3 +36,6 @@ The `payment` service will check if `quantity` * `price` = `total`, then the pay
 Make a `patch` request to `localhost:3000/order/{order id}` which includes `Authorization` token: `Bearer itisatoken`.
 ## Get order
 Make a `get` request to `localhost:3000/order/{order id}` which includes `Authorization` token: `Bearer itisatoken`.
+
+# E2E test
+In testing enviroment, please provide a Postgres instance running on port `5433` and a runing RabbitMQ instance.
